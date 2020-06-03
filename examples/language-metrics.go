@@ -3,16 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"sync"
 	"time"
 
+	"github.com/gosuri/uiprogress"
 	"github.com/negah/percent"
 	"github.com/xanzy/go-gitlab"
 )
 
 var waitGroup sync.WaitGroup
 
-func languageMetricsExample() {
+func main() {
 	git, err := gitlab.NewClient(
 		"yourtokengoeshere",
 		gitlab.WithBaseURL("https://gitlab.company.com"),
@@ -39,6 +41,16 @@ func languageMetricsExample() {
 			log.Fatal(err)
 		}
 		waitGroup.Add(len(ps))
+		bar := uiprogress.AddBar(len(ps)).AppendCompleted().PrependElapsed()
+		bar.PrependFunc(func(b *uiprogress.Bar) string {
+			return fmt.Sprintf(
+				"Fetching %d/%d projects",
+				b.Current(),
+				len(ps),
+			)
+		})
+
+		uiprogress.Start()
 
 		// List all the projects we've found so far.
 		for _, p := range ps {
@@ -63,8 +75,10 @@ func languageMetricsExample() {
 					} else {
 						increaseElement(metrics, key, count)
 					}
-					fmt.Printf(".")
-					time.Sleep(5e7)
+					time.Sleep(
+						time.Millisecond * time.Duration(rand.Intn(500)),
+					)
+					bar.Incr()
 				}
 			}(p)
 		}
@@ -73,6 +87,7 @@ func languageMetricsExample() {
 
 		// Exit the loop when we've seen all pages.
 		if resp.CurrentPage >= resp.TotalPages {
+			uiprogress.Stop()
 			for _, metric := range metrics {
 				fmt.Printf(
 					"\n%s %d %0.2f%%",

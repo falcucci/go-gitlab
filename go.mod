@@ -1,10 +1,14 @@
 module github.com/xanzy/go-gitlab
 
 require (
+	github.com/google/go-cmp v0.4.1
 	github.com/google/go-querystring v1.0.0
+	github.com/gosuri/uilive v0.0.4 // indirect
+	github.com/gosuri/uiprogress v0.0.1
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-retryablehttp v0.6.4
 	github.com/negah/percent v0.0.0-20190320080132-ee43e92cfb0b
+	github.com/schollz/progressbar/v3 v3.3.3
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/net v0.0.0-20181108082009-03003ca0c849 // indirect
 	golang.org/x/oauth2 v0.0.0-20181106182150-f42d05182288
